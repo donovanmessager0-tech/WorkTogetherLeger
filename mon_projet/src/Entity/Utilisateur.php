@@ -84,6 +84,31 @@ class Utilisateur
     }
 
     /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): ?string
+    {
+        return $this->mdp;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->mdp = $password;
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, Role>
      */
     public function getRole(): Collection

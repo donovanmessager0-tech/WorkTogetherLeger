@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Baie index{% endblock %}
+
+{% block body %}
+    <h1>Baie index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Numero</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for baie in baies %}
+            <tr>
+                <td>{{ baie.id }}</td>
+                <td>{{ baie.numero }}</td>
+                <td>
+                    <a href="{{ path('app_baie_show', {'id': baie.id}) }}">show</a>
+                    <a href="{{ path('app_baie_edit', {'id': baie.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_baie_new') }}">Create new</a>
+{% endblock %}

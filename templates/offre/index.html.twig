@@ -9,12 +9,16 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ OffreController }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/workspaces/WorkTogetherLeger/src/Controller/OffreController.php</code></li>
-        <li>Your template at <code>/workspaces/WorkTogetherLeger/templates/offre/index.html.twig</code></li>
+<ul>
+        {% for o in offre %}
+            <li>{{ o.getID ?? 'Offre sans ID' }}</li>
+            <li>{{ o.getNom ?? 'Offre sans Nom' }}</li>
+            <li>{{ o.getPrixMensuel ?? 'Offre sans Prix Mensuel' }}</li>
+            <li>{{ o.getPrixAnnuel ?? 'Offre sans Prix Annuel' }}</li>
+            <li>{{ o.getNbunit ?? 'Offre sans nombre d\'unité' }}</li>
+        {% else %}
+            <li>Aucune offre n'est disponible pour le moment.</li>
+        {% endfor %}
     </ul>
 </div>
 {% endblock %}

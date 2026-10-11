@@ -138,6 +138,20 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getRoles(): array
+{
+    $roles = ['ROLE_USER'];
+    foreach ($this->Role as $role) {
+
+    }
+    return array_unique($roles);
+}
+
+    public function eraseCredentials(): void
+{
+    
+}
+
     public function isVerified(): bool
     {
         return $this->isVerified;

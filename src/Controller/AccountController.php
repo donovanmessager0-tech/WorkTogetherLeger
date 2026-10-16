@@ -15,4 +15,9 @@ final class AccountController extends AbstractController
             'controller_name' => 'AccountController',
         ]);
     }
+    public function  pfp(): Response {
+    return $this->render('account/index.html.twig', [
+    'user' => $user,
+]);
+    }
 }

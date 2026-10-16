@@ -2,6 +2,16 @@
 
 {% block title %}Hello AccountController!{% endblock %}
 
+{% block header %}
+
+        <div>Worktogether</div>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../offre">Offres</a> 
+            <a  href="../../home">Déconnexion</a> 
+        </div>
+
+{% endblock %}
+
 {% block body %}
 <div>
     {% if user.pfp %}

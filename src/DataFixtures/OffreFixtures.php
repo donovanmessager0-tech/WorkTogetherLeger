@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Offre;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -17,10 +18,10 @@ $offresData = [
         ];
         foreach( $offresData as $data) {
             $offre = new Offre();
-            $offre=setNom($data[0]);
-            $offre=setPrixMensuel($data[1]);
-            $offre=setPrixAnnuel($data[2]);
-            $offre=setNbunit($data[3]);
+            $offre->setNom($data[0]);
+            $offre->setPrixMensuel($data[1]);
+            $offre->setPrixAnnuel($data[2]);
+            $offre->setNbunit($data[3]);
             $manager-> persist($offre);
         }
 

@@ -14,20 +14,42 @@ class UniteFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $reservation = $manager->getRepository(Reservation::class)->findOneBy([]);
-        for ($i = 1; $i <= 5; $i++) {
-        $unite = new Unite();
-        $unite->setNom('Serveur Test ' . $i);
-        $unite->setType($i % 2 === 0 ? 'web' : 'bdd');
-        $unite->setCouleur($i % 2 === 0 ? 'bleu' : 'vert');
-        $unite->setEmplacement('B014-U0' . $i);
-        $unite->setEtat('OK');
-        
-        if ($reservation) {
-            $unite->setReservation($reservation);
-        }
+        $types = ['web', 'bdd', 'stockage'];
+        $couleurs = ['bleu', 'vert', 'gris'];
+        $statuts = ['OK', 'OK', 'OK', 'maintenance']; // Majoritairement OK
 
-        $manager->persist($unite);
-    }
+        // Boucle sur les 30 baies
+        for ($b = 1; $b <= 30; $b++) {
+            $numeroBaie = sprintf('B%03d', $b);
+            $baie = $manager->getRepository(Baie::class)->findOneBy(['numero' => $numeroBaie]);
+
+            if (!$baie) {
+                continue;
+            }
+
+            // Boucle sur les 42 unités de chaque baie
+            for ($u = 1; $u <= 42; $u++) {
+                $unite = new Unite();
+                
+                // Format de l'emplacement ex: B014-U06
+                $emplacement = sprintf('%s-U%02d', $numeroBaie, $u);
+
+                $unite->setNom('Serveur ' . $emplacement);
+                $unite->setType($types[array_rand($types)]);
+                $unite->setCouleur($couleurs[array_rand($couleurs)]);
+                $unite->setStatut($statuts[array_rand($statuts)]); // Ou setEtat selon ton entité
+                // $unite->setNumeroU($u); // Décommente si tu as un champ spécifique pour le numéro d'unité
+
+                $unite->setBaie($baie);
+
+                // Optionnel : associer à une réservation de test si elle existe
+                if ($reservation && $b === 1) { // On met les premières sur la réservation de test
+                    $unite->setReservation($reservation);
+                }
+
+                $manager->persist($unite);
+            }
+        }
 
         $manager->flush();
     }
@@ -35,9 +57,10 @@ class UniteFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            OffreFixtures::class,
+            BaieFixtures::class,
             ReservationFixtures::class,
+            UtilisateurFixtures::class,
+            OffreFixtures::class,
         ];
     }
-    }
-
+}

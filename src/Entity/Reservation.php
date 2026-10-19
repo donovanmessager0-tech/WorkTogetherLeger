@@ -28,9 +28,16 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?Offre $offre = null;
 
+    /**
+     * @var Collection<int, Unite>
+     */
+    #[ORM\OneToMany(targetEntity: Unite::class, mappedBy: 'reservation')]
+    private Collection $unites;
+
     public function __construct()
     {
         $this->baie = new ArrayCollection();
+        $this->unites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,6 +95,36 @@ class Reservation
     public function setOffre(?Offre $offre): static
     {
         $this->offre = $offre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Unite>
+     */
+    public function getUnites(): Collection
+    {
+        return $this->unites;
+    }
+
+    public function addUnite(Unite $unite): static
+    {
+        if (!$this->unites->contains($unite)) {
+            $this->unites->add($unite);
+            $unite->setReservation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUnite(Unite $unite): static
+    {
+        if ($this->unites->removeElement($unite)) {
+            // set the owning side to null (unless already changed)
+            if ($unite->getReservation() === $this) {
+                $unite->setReservation(null);
+            }
+        }
 
         return $this;
     }

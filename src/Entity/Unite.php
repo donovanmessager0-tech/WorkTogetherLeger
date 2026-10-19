@@ -31,6 +31,9 @@ class Unite
     #[ORM\ManyToMany(targetEntity: Intervention::class, mappedBy: 'unite')]
     private Collection $interventions;
 
+    #[ORM\ManyToOne(inversedBy: 'unites')]
+    private ?Reservation $reservation = null;
+
     public function __construct()
     {
         $this->interventions = new ArrayCollection();
@@ -100,6 +103,18 @@ class Unite
         if ($this->interventions->removeElement($intervention)) {
             $intervention->removeUnite($this);
         }
+
+        return $this;
+    }
+
+    public function getReservation(): ?Reservation
+    {
+        return $this->reservation;
+    }
+
+    public function setReservation(?Reservation $reservation): static
+    {
+        $this->reservation = $reservation;
 
         return $this;
     }

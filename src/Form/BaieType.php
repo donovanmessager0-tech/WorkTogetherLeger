@@ -11,16 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BaieType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder
-            ->add('numero')
-            ->add('reservation', EntityType::class, [
-                'class' => Reservation::class,
-                'choice_label' => 'id',
-            ])
-        ;
-    }
+ public function buildForm(FormBuilderInterface $builder, array $options): void
+{
+    $builder
+        ->add('numero')
+    ;
+}
 
     public function configureOptions(OptionsResolver $resolver): void
     {

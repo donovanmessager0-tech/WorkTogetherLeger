@@ -27,10 +27,17 @@ class UniteFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->persist($unite);
-        // $product = new Product();
-        // $manager->persist($product);
+    }
 
         $manager->flush();
     }
-}
-}
+
+    public function getDependencies(): array
+    {
+        return [
+            OffreFixtures::class,
+            ReservationFixtures::class,
+        ];
+    }
+    }
+

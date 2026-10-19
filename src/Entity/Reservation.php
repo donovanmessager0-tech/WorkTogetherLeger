@@ -22,7 +22,7 @@ class Reservation
     private Collection $baie;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Client $client = null;
+    private ?Utilisateur $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -75,12 +75,12 @@ class Reservation
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getClient(): ?Utilisateur
     {
         return $this->client;
     }
 
-    public function setClient(?Client $client): static
+    public function setClient(?Utilisateur $client): static
     {
         $this->client = $client;
 

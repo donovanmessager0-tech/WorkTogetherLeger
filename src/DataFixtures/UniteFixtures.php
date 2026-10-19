@@ -34,7 +34,7 @@ class UniteFixtures extends Fixture implements DependentFixtureInterface
                 // Format de l'emplacement ex: B014-U06
                 $emplacement = sprintf('%s-U%02d', $numeroBaie, $u);
 
-                $unite->setNom('Serveur ' . $emplacement);
+                
                 $unite->setType($types[array_rand($types)]);
                 $unite->setCouleur($couleurs[array_rand($couleurs)]);
                 $unite->setStatut($statuts[array_rand($statuts)]); // Ou setEtat selon ton entité

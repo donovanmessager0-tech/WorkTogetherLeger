@@ -34,6 +34,12 @@ class Unite
     #[ORM\ManyToOne(inversedBy: 'unites')]
     private ?Reservation $reservation = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $Type = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $Couleur = null;
+
     public function __construct()
     {
         $this->interventions = new ArrayCollection();
@@ -115,6 +121,30 @@ class Unite
     public function setReservation(?Reservation $reservation): static
     {
         $this->reservation = $reservation;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->Type;
+    }
+
+    public function setType(string $Type): static
+    {
+        $this->Type = $Type;
+
+        return $this;
+    }
+
+    public function getCouleur(): ?string
+    {
+        return $this->Couleur;
+    }
+
+    public function setCouleur(string $Couleur): static
+    {
+        $this->Couleur = $Couleur;
 
         return $this;
     }

@@ -14,7 +14,7 @@ class Role
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $nom_role = null;
+    private ?string $nom = null;
 
     #[ORM\ManyToOne(inversedBy: 'Role')]
     private ?Utilisateur $utilisateur = null;
@@ -24,14 +24,14 @@ class Role
         return $this->id;
     }
 
-    public function getNomRole(): ?string
+    public function getNom(): ?string
     {
-        return $this->nom_role;
+        return $this->nom;
     }
 
-    public function setNomRole(string $nom_role): static
+    public function setNom(string $nom): static
     {
-        $this->nom_role = $nom_role;
+        $this->nom = $nom;
 
         return $this;
     }

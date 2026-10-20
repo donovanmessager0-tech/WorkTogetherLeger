@@ -17,11 +17,11 @@ class ReservationType extends AbstractType
         $builder
             ->add('client', EntityType::class, [
                 'class' => Client::class,
-                'choice_label' => 'id',
+                'choice_label' => 'identifiant',
             ])
             ->add('offre', EntityType::class, [
                 'class' => Offre::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
             ])
         ;
     }

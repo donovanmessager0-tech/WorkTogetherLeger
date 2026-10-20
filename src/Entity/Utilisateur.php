@@ -141,7 +141,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeRole(Role $role): static
     {
         if ($this->Role->removeElement($role)) {
-            // set the owning side to null (unless already changed)
             if ($role->getUtilisateur() === $this) {
                 $role->setUtilisateur(null);
             }
@@ -223,4 +222,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function __toString(): string
+{
+    return $this->getIdentifiant() ?? '';
 }
+}
+

@@ -26,6 +26,8 @@ class UtilisateurFixtures extends Fixture
             ['machin.truc@worktogether.com', 'Truc', 'Machin', 'Mtruc', 'holy randomness', 'MyParentsWereSoOriginalsfrfr'],
         ];
 
+        $roleClient = $manager->getRepository(Role::class)->findOneBy(['nom' => 'Client']);
+
         foreach ($usersData as $index => $data) {
             $user = new Utilisateur();
             $user->setEmail($data[0]);
@@ -37,6 +39,9 @@ class UtilisateurFixtures extends Fixture
             $hashedPassword = $this->passwordHasher->hashPassword($user, $data[5]);
             $user->setMdp($hashedPassword);
 
+            if ($roleClient) {
+            $user->addRole($roleClient); 
+    }
             $manager->persist($user);
 
             // Crée dynamiquement les références : user_1, user_2, user_3

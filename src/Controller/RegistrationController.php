@@ -37,8 +37,14 @@ class RegistrationController extends AbstractController
             // encode the plain password
             $user->setMdp($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $roleClient = $entityManager->getRepository(Role::class)->findOneBy(['nom' => 'Client']);
+
+
+            if ($roleClient) {
+                $user->addRole($roleClient); 
+            }
+                $entityManager->persist($user);
+                $entityManager->flush();
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,

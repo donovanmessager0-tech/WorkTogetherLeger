@@ -38,7 +38,7 @@ class UniteFixtures extends Fixture implements DependentFixtureInterface
                 $unite->setType($types[array_rand($types)]);
                 $unite->setCouleur($couleurs[array_rand($couleurs)]);
                 $unite->setStatut($statuts[array_rand($statuts)]); // Ou setEtat selon ton entité
-                // $unite->setNumeroU($u); // Décommente si tu as un champ spécifique pour le numéro d'unité
+                $unite->setNumeroU($u); // Décommente si tu as un champ spécifique pour le numéro d'unité
 
                 $unite->setBaie($baie);
 

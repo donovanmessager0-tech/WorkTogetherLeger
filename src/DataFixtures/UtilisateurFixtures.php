@@ -43,14 +43,16 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
 
             if ($roleClient) {
             $user->addRole($roleClient); 
-
+            }
             $manager->persist($user);
 
             $client = new Client();
             $client->setNomcli($data[1] . ' ' . $data[2]); // Nom + Prénom
             $client->setEmail($data[0]);
-            $client->setTel('0000000000'); // Un numéro par défaut
+            $client->setTel($data[6] ?? '0600000000'); // Un numéro par défaut
             $manager->persist($client);
+
+            $this->addReference('client_' . ($index + 1), $client);
 
             // Crée dynamiquement les références : user_1, user_2, user_3
             $this->addReference(self::USER_REFERENCE_PREFIX . ($index + 1), $user);
@@ -59,7 +61,7 @@ class UtilisateurFixtures extends Fixture implements DependentFixtureInterface
 
 
 
-        }
+        
 
         $manager->flush();
     }

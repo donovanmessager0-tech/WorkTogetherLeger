@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Client;
 use App\Entity\Reservation;
 use App\Entity\Utilisateur;
 use App\Entity\Offre;
@@ -28,11 +29,12 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
 
             $user = $this->getReference($userReference, Utilisateur::class);
             // On va chercher l'offre correspondante en base de données
+            $client+ $this->getReference('client_' . ($index + 1), Client::class);
             $offre = $manager->getRepository(Offre::class)->findOneBy(['nom' => $offreNom]);
 
             if ($user && $offre) {
                 $reservation = new Reservation();
-                $reservation->setClient($user);
+                $reservation->setClient($client);
                 $reservation->setOffre($offre);
 
                 $manager->persist($reservation);

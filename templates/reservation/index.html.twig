@@ -9,6 +9,8 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Client</th>
+                <th>Offre</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -16,6 +18,8 @@
         {% for reservation in reservations %}
             <tr>
                 <td>{{ reservation.id }}</td>
+                <td>{{ reservation.getClient() }}</td>
+                <td>{{ reservation.getOffre() }}</td>
                 <td>
                     <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
                     <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>

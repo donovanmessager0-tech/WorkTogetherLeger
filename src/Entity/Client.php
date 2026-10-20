@@ -25,6 +25,9 @@ class Client
     #[ORM\Column(length: 255)]
     private ?string $tel = null;
 
+    #[ORM\OneToOne(inversedBy: 'client', cascade: ['persist', 'remove'])]
+    private ?Utilisateur $utilisateur = null;
+
     /**
      * @var Collection<int, Reservation>
      */
@@ -106,4 +109,15 @@ class Client
 
         return $this;
     }
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+        public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+        return $this;
+    }
+
 }

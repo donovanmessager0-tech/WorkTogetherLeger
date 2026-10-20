@@ -49,6 +49,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $society = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $tel = null;
+
     public function __construct()
     {
         $this->Role = new ArrayCollection();
@@ -153,7 +156,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     $roles = ['ROLE_USER'];
     foreach ($this->Role as $role) {
-
+        $roles[] = 'ROLE_' . strtoupper($role->getNom());
     }
     return array_unique($roles);
 }
@@ -226,5 +229,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     return $this->getIdentifiant() ?? '';
 }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(string $tel): static
+    {
+        $this->tel = $tel;
+
+        return $this;
+    }
 }
 

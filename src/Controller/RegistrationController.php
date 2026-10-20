@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
@@ -44,6 +45,12 @@ class RegistrationController extends AbstractController
                 $user->addRole($roleClient); 
             }
                 $entityManager->persist($user);
+
+                $client = new Client();
+                $client->setNomcli($user->getNom() . ' ' . $user->getPrenom());
+                $client->setEmail($user->getEmail());
+                $client->setTel($user->getTel()); 
+                $entityManager->persist($client);
                 $entityManager->flush();
 
             // generate a signed url and email it to the user

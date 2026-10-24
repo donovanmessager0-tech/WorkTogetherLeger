@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Role;
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;

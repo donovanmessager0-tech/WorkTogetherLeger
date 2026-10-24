@@ -73,7 +73,7 @@ class Client
         return $this->tel;
     }
 
-    public function setTel(string $tel): static
+    public function setTel(?string $tel): static
     {
         $this->tel = $tel;
 

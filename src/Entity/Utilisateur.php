@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Role;
 use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -31,7 +32,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Role>
      */
-    #[ORM\OneToMany(targetEntity: Role::class, mappedBy: 'utilisateur')]
+    #[ORM\OneToMany(targetEntity: \App\Entity\Role::class, mappedBy: 'utilisateur')]
     private Collection $Role;
 
     #[ORM\Column]

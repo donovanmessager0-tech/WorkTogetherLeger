@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AccountController!{% endblock %}
+
+{% block header %}
+
+        <div>Worktogether</div>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../offre">Offres</a> 
+            <a  href="../../home">Déconnexion</a> 
+        </div>
+
+{% endblock %}
+
+{% block body %}
+<div>
+    {% if user.pfp %}
+    <img src="{{ asset('uploads/pfp/' ~ user.pfp) }}" alt="photo de profil">
+    {%else%}
+    <img src="/picturesAccount/Default.jpg">
+    {%endif%}
+    <div>Nom: {{ user.nom }}</div>
+    <div>Prénom: {{ user.prenom }}</div>
+    <div>Nom d'utilisateur: {{ user.identifiant }}</div>
+    <div>société: {{ user.society ?? 'pas de société' }}</div>
+    </div>
+    <a href="tochangelaterdumbass"> Changer les informations </a>
+
+</div>
+{% endblock %}

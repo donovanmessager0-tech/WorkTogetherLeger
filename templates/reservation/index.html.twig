@@ -2,6 +2,16 @@
 
 {% block title %}Reservation index{% endblock %}
 
+{% block header %}
+
+        <div>Worktogether</div>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../account">Mon compte</a> 
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        </div>
+
+{% endblock %}
+
 {% block body %}
     <h1>Reservation index</h1>
 

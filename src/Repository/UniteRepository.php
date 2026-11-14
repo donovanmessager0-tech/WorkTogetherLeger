@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Utilisateur;
 use App\Entity\Unite;
+use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +42,19 @@ class UniteRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+/**
+ * @return Unite[] Returns an array of Unite objects
+ */
+public function findOneByUser(Utilisateur $user): array
+{
+    return $this->createQueryBuilder('u')
+        ->join('u.reservation', 'r') // Pointe vers le champ $reservation de Unite
+        ->andWhere('r.client = :user')  // Pointe vers le champ $client de Reservation (qui est un Utilisateur)
+        ->setParameter('user', $user)
+        ->getQuery()
+        ->getResult();
 }
+}
+
+

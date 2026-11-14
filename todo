@@ -1,0 +1,9 @@
+look up for is granted 
+cameelcase
+asset for image
+jamais ailleurs
+src = php
+config = yaml
+templates = twig
+assets = js, css, images etc
+nettoyer crud apres les make:crud

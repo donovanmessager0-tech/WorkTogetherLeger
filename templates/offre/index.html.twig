@@ -28,7 +28,7 @@
                     <p><strong>Prix annuel :</strong> {{ o.getPrixAnnuel ?? '0' }} €</p>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ path('app_reservation_new') }}" class="btn">Réserver</a>
+                    <a href="{{ path('app_payment_checkout', {id: o.id}) }}" class="btn btn-primary">Payer cette offre</a>
                 </div>
             </div>
         {% else %}

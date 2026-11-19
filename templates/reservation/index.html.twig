@@ -22,6 +22,8 @@
                 <th>Id</th>
                 <th>Client</th>
                 <th>Offre</th>
+                <th>Type d'abonnement</th>
+                <th>Date de Paiement</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -31,9 +33,10 @@
                 <td>{{ reservation.id }}</td>
                 <td>{{ reservation.getClient() }}</td>
                 <td>{{ reservation.getOffre() }}</td>
+                <td>{{ reservation.getperiod() }}</td>
+                <td>{{ reservation.paidAt ? reservation.paidAt|date('d/m/Y H:i') : '-' }}</td>
                 <td>
                     <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

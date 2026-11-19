@@ -18,8 +18,6 @@ class Unite
     #[ORM\Column(length: 255)]
     private ?string $numero_u = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $statut = null;
 
     #[ORM\ManyToOne(inversedBy: 'unites')]
     #[ORM\JoinColumn(nullable: false)]
@@ -34,11 +32,14 @@ class Unite
     #[ORM\ManyToOne(inversedBy: 'unites')]
     private ?Reservation $reservation = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $Type = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $Couleur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Unite')]
+    private ?Type $type = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Name')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Status $status = null;
 
     public function __construct()
     {
@@ -62,17 +63,6 @@ class Unite
         return $this;
     }
 
-    public function getStatut(): ?string
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(string $statut): static
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
 
     public function getBaie(): ?Baie
     {
@@ -82,6 +72,18 @@ class Unite
     public function setBaie(?Baie $baie): static
     {
         $this->baie = $baie;
+
+        return $this;
+    }
+
+    public function getType(): ?Type
+    {
+        return $this->type;
+    }
+
+    public function setType(?Type $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -125,27 +127,19 @@ class Unite
         return $this;
     }
 
-    public function getType(): ?string
+    public function getStatus(): ?Status
     {
-        return $this->Type;
+        return $this->status;
     }
 
-    public function setType(string $Type): static
+    public function setStatus(?Status $status): static
     {
-        $this->Type = $Type;
+        $this->status = $status;
 
         return $this;
     }
 
-    public function getCouleur(): ?string
-    {
-        return $this->Couleur;
-    }
 
-    public function setCouleur(string $Couleur): static
-    {
-        $this->Couleur = $Couleur;
 
-        return $this;
-    }
+
 }

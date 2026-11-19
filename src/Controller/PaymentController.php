@@ -6,6 +6,7 @@ use App\Entity\Offre;
 use App\Entity\Reservation;
 use App\Entity\Unite;
 use App\Entity\Baie;
+use App\Entity\Status;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -20,6 +21,15 @@ class PaymentController extends AbstractController
     #[Route('/payer/{id}', name: 'app_payment_checkout')]
     public function checkout(Offre $offre, Request $request): Response
     {
+    $period = $request->query->get('period','mensuel');
+    if(!in_array($period, ['mensuel', 'annuel'], true)) {
+        $period = 'mensuel';
+
+    }
+
+    $prix = $period === 'annuel'? $offre->getPrixAnnuel() : $offre->getPrixMensyel();
+    $labelPeriod = $period === 'annuel' ? 'Annuel':'Mensuel';
+
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
         $scheme = $request->headers->get('x-forwarded-proto', $request->getScheme());
@@ -31,14 +41,20 @@ class PaymentController extends AbstractController
                 'price_data' => [
                     'currency' => 'eur',
                     'product_data' => [
-                        'name' => $offre->getNom(),
+                        'name' => sprintf('%s (%s)', $offre->getNom(), $labelPeriod),
                     ],
-                    'unit_amount' => $offre->getPrixMensuel() * 100,
+                    'unit_amount' => (int) round ($prix * 100) ,
                 ],
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => $baseUrl . $this->generateUrl('payment_success', ['offre_id' => $offre->getId()]),
+            'metadata' => [
+                'offre_id' => $offre->getId(),
+                'period' => $period,
+            ],
+            'success_url' => $baseUrl . $this->generateUrl('payment_success', 
+            ['offre_id' => $offre->getId(),
+            'period' => $period]),
             'cancel_url' => $baseUrl . $this->generateUrl('payment_cancel'),
         ]);
 
@@ -49,6 +65,10 @@ class PaymentController extends AbstractController
     public function success(Request $request, EntityManagerInterface $entitymanager): Response
     {
         $offreId = $request->query->get('offre_id');
+        $period = $request->query->get('period', 'mensuel');
+        if (!in_array($period, ['mensuel', 'annuel'], true)) {
+            $period = 'mensuel';
+        }
         $user = $this->getUser();
 
         if ($offreId) {
@@ -58,11 +78,15 @@ class PaymentController extends AbstractController
                 $reservation = new Reservation();
                 $reservation->setClient($user);
                 $reservation->setOffre($offre);
+                $reservation->setPeriod($period);
+                $reservation->setPaidAt(new \DateTimeImmutable());
                 $entitymanager->persist($reservation);
 
                 $nombreTotalUnites = $offre->getNbunit();
                 $baieCourante = null;
                 $numeroBaie = 1;
+
+                $status = $entitymanager->getRepository(Status::class)->findOneBy(['name' => 'Disponible']);
 
                 for ($i = 1; $i <= $nombreTotalUnites; $i++) {
                     $positionBaie = ($i - 1) % 42;
@@ -80,7 +104,7 @@ class PaymentController extends AbstractController
                     $unite = new Unite();
                     $unite->setNumeroU(sprintf('U%03d', $numeroUnite));
                     $unite->setReservation($reservation);
-                    $unite->setStatut('disponible');
+                    $unite->setStatus($status);
                     $unite->setBaie($baieCourante);
                     $entitymanager->persist($unite);
                 }
@@ -88,7 +112,7 @@ class PaymentController extends AbstractController
                 $entitymanager->flush();
             }
         }
-        return $this->render('payment/success.html.twig');
+        return $this->render('payment/success.html.twig', ['period' => $period]);
     }
 
     #[Route('/payment/cancel', name: 'payment_cancel')]

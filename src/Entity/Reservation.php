@@ -34,6 +34,12 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Unite::class, mappedBy: 'reservation')]
     private Collection $unites;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $paidAt = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $period = null;
+
     public function __construct()
     {
         $this->baie = new ArrayCollection();
@@ -125,6 +131,30 @@ class Reservation
                 $unite->setReservation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(\DateTimeImmutable $paidAt): static
+    {
+        $this->paidAt = $paidAt;
+
+        return $this;
+    }
+
+    public function getPeriod(): ?string
+    {
+        return $this->period;
+    }
+
+    public function setPeriod(string $period): static
+    {
+        $this->period = $period;
 
         return $this;
     }

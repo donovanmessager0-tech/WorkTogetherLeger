@@ -2,6 +2,17 @@
 
 {% block title %}Unite index{% endblock %}
 
+{% block header %}
+
+        <div>Worktogether</div>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../offre">Offre</a>
+            <a  href="../../account">Mon compte</a> 
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        </div>
+
+{% endblock %}
+
 {% block body %}
     <h1>Unite index</h1>
 
@@ -11,7 +22,8 @@
                 <th>Id</th>
                 <th>Numero_u</th>
                 <th>Statut</th>
-                <th>actions</th>
+                <th>Type de serveur</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

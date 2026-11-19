@@ -5,8 +5,10 @@
 {% block header %}
 
         <div>Worktogether</div>
-            <a  href="../../reservation">Reservation</a>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../unite">Unite</a>
             <a  href="../../account">Mon compte</a> 
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
         </div>
 
 {% endblock %}
@@ -16,24 +18,41 @@
 <div class="container">
     <h2>Nos offres commerciales</h2>
 
-    <div class="cards-grid">
-        {% for o in offre %}
-            <div class="card">
-                <div class="card-header">
-                    <h3>{{ o.getNom ?? 'Offre sans Nom' }}</h3>
+<div class="cards-grid">
+    {% for o in offre %}
+        {% set radioName = 'tarif_' ~ o.id %}
+        <div class="card" data-offre-id="{{ o.id }}">
+            <div class="card-header">
+                <h3>{{ o.getNom ?? 'Offre sans Nom' }}</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Nombre d'unités :</strong> {{ o.getNbunit ?? 'N/C' }}</p>
+
+                <div>
+                    <label>
+                        <input type="radio" name="{{ radioName }}" value="mensuel" checked>
+                        <strong>Prix mensuel :</strong> {{ o.getPrixMensuel ?? '0' }} €
+                    </label>
                 </div>
-                <div class="card-body">
-                    <p><strong>Nombre d'unités :</strong> {{ o.getNbunit ?? 'N/C' }}</p>
-                    <p><strong>Prix mensuel :</strong> {{ o.getPrixMensuel ?? '0' }} €</p>
-                    <p><strong>Prix annuel :</strong> {{ o.getPrixAnnuel ?? '0' }} €</p>
-                </div>
-                <div class="card-footer">
-                    <a href="{{ path('app_payment_checkout', {id: o.id}) }}" class="btn btn-primary">Payer cette offre</a>
+
+                <div>
+                    <label>
+                        <input type="radio" name="{{ radioName }}" value="annuel">
+                        <strong>Prix annuel :</strong> {{ o.getPrixAnnuel ?? '0' }} €
+                    </label>
                 </div>
             </div>
-        {% else %}
-            <p>Aucune offre n'est disponible pour le moment.</p>
-        {% endfor %}
-    </div>
+            <div class="card-footer">
+                <a
+                    href="{{ path('app_payment_checkout', {id: o.id, period: 'mensuel'}) }}"
+                    data-base-href="{{ path('app_payment_checkout', {id: o.id}) }}"
+                    class="btn btn-primary js-checkout-link"
+                >
+                    Payer cette offre
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 </div>
 {% endblock %}

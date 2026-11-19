@@ -2,6 +2,18 @@
 
 {% block title %}Unite{% endblock %}
 
+{% block header %}
+
+        <div>Worktogether</div>
+            <a  href="../../reservation">Réservations</a>
+            <a  href="../../unite">Unite</a> 
+            <a  href="../../offre">Offre</a>
+            <a  href="../../account">Mon Compte</a>
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        </div>
+
+{% endblock %}
+
 {% block body %}
 
 {% set typeColor = unite.type and unite.type.color ? unite.type.color : 'currentColor' %}

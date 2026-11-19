@@ -36,7 +36,7 @@ class PaymentController extends AbstractController
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => $baseUrl . $this->generateUrl('payment_success'),
+            'success_url' => $baseUrl . $this->generateUrl('payment_success', ['offre_id' => $offre->getId()]),
             'cancel_url' => $baseUrl . $this->generateUrl('payment_cancel'),
         ]);
 
@@ -48,4 +48,10 @@ class PaymentController extends AbstractController
     {
         return $this->render('payment/success.html.twig');
     }
+
+    #[Route('/payment/cancel', name: 'payment_cancel')]
+public function cancel(): Response
+{
+    return $this->render('payment/cancel.html.twig');
+}
 }

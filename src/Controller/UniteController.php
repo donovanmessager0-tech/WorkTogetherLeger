@@ -74,11 +74,14 @@ final class UniteController extends AbstractController
     }
     
     #[Route(name: 'app_unite_index', methods: ['GET'])]
-    public function index(
-        #[CurrentUser] Utilisateur $user, 
-        UniteRepository $uniteRepository
-    ): Response {
-        // On récupère directement les unités de l'utilisateur connecté via la méthode du repository
+    public function index(#[CurrentUser] ?Utilisateur $user, UniteRepository $uniteRepository): Response
+    {
+        // Sécurité : si aucun utilisateur n'est connecté, on redirige vers la connexion
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // On récupère uniquement les unités de l'utilisateur connecté
         return $this->render('unite/index.html.twig', [
             'unites' => $uniteRepository->findByUser($user),
         ]);

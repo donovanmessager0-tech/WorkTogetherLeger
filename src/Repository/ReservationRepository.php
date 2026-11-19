@@ -27,4 +27,15 @@ class ReservationRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
 }
+
+public function findUserByUnite(Unite $unite): ?Utilisateur
+    {
+        return $this->createQueryBuilder('u')
+            ->select('r.client') // On sélectionne le client de la réservation liée
+            ->join('u.reservation', 'r')
+            ->andWhere('u = :unite')
+            ->setParameter('unite', $unite)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

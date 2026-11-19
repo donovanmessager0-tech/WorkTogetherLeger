@@ -15,15 +15,18 @@ class Status
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     /**
      * @var Collection<int, Unite>
      */
     #[ORM\OneToMany(targetEntity: Unite::class, mappedBy: 'status')]
-    private Collection $Name;
+    private Collection $unites;
 
     public function __construct()
     {
-        $this->Name = new ArrayCollection();
+        $this->unites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -31,30 +34,41 @@ class Status
         return $this->id;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Unite>
      */
-    public function getName(): Collection
+    public function getUnites(): Collection
     {
-        return $this->Name;
+        return $this->unites;
     }
 
-    public function addName(Unite $name): static
+    public function addUnite(Unite $unite): static
     {
-        if (!$this->Name->contains($name)) {
-            $this->Name->add($name);
-            $name->setStatus($this);
+        if (!$this->unites->contains($unite)) {
+            $this->unites->add($unite);
+            $unite->setStatus($this);
         }
 
         return $this;
     }
 
-    public function removeName(Unite $name): static
+    public function removeUnite(Unite $unite): static
     {
-        if ($this->Name->removeElement($name)) {
-            // set the owning side to null (unless already changed)
-            if ($name->getStatus() === $this) {
-                $name->setStatus(null);
+        if ($this->unites->removeElement($unite)) {
+            if ($unite->getStatus() === $this) {
+                $unite->setStatus(null);
             }
         }
 

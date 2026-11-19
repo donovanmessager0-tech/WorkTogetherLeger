@@ -358,3 +358,25 @@ a.btn:hover {
     color: #FFFFFF !important;
     background-color: #2563eb;
 }
+
+.titre-avec-icone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--type-color, inherit);
+}
+
+.titre-avec-icone svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    display: block;
+    fill: var(--type-color, currentColor);
+}
+
+.titre-avec-icone h1 {
+    margin: 0;
+    line-height: 1;
+    color: var(--type-color, currentColor);
+}

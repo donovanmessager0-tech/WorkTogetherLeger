@@ -27,7 +27,8 @@ class PaymentController extends AbstractController
 
     }
 
-    $prix = $period === 'annuel'? $offre->getPrixAnnuel() : $offre->getPrixMensyel();
+    $prix = $period === 'annuel'? $offre->getPrixAnnuel() : $offre->getPrixMensuel();
+    $interval = $period === 'annuel' ? 'year' : 'month';
     $labelPeriod = $period === 'annuel' ? 'Annuel':'Mensuel';
 
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
@@ -44,10 +45,13 @@ class PaymentController extends AbstractController
                         'name' => sprintf('%s (%s)', $offre->getNom(), $labelPeriod),
                     ],
                     'unit_amount' => (int) round ($prix * 100) ,
+                    'recurring' => [
+                        'interval' => $interval,
+                    ]
                 ],
                 'quantity' => 1,
             ]],
-            'mode' => 'payment',
+            'mode' => 'subscription',
             'metadata' => [
                 'offre_id' => $offre->getId(),
                 'period' => $period,
@@ -104,7 +108,9 @@ class PaymentController extends AbstractController
                     $unite = new Unite();
                     $unite->setNumeroU(sprintf('U%03d', $numeroUnite));
                     $unite->setReservation($reservation);
+                    if ($status) {
                     $unite->setStatus($status);
+                    }
                     $unite->setBaie($baieCourante);
                     $entitymanager->persist($unite);
                 }

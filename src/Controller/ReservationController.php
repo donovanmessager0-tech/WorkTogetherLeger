@@ -77,10 +77,24 @@ final class ReservationController extends AbstractController
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+            $subscriptionId = $reservation -> getStripeSubscriptionId();
+
+            if ($subscriptionId) {
+                try {
+                    $stripe = new StripeClient ($stripeSecretKey);
+                    $stripe->subscriptions -> cancel($subscriptionId);
+
+                }
+                catch (ApiErrorException $e){
+                    $this->addFlash('danger', 'Erreur Stripe lors de l’annulation : ' . $e->getMessage());
+                return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+            }
+
             $entityManager->remove($reservation);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }
+}
 }

@@ -4,28 +4,44 @@
 
 {% block header %}
 
-        <div>Worktogether</div>
-            <a  href="../../reservation">Réservations</a>
-            <a  href="../../unite">Unite</a> 
-            <a  href="../../offre">Offre</a>
-            <a href="{{ path('app_logout') }}">Se déconnecter</a>
-        </div>
+    <div>Worktogether</div>
+    <a href="../../reservation">Réservations</a>
+    <a href="../../unite">Unite</a>
+    <a href="../../offre">Offre</a>
+    <a href="{{ path('app_logout') }}">Se déconnecter</a>
 
 {% endblock %}
 
 {% block body %}
-<div>
-    {% if user.pfp %}
-    <img src="{{ asset('uploads/pfp/' ~ user.pfp) }}" alt="photo de profil">
-    {%else%}
-    <img src="/picturesAccount/Default.jpg">
-    {%endif%}
-    <div>Nom: {{ user.nom }}</div>
-    <div>Prénom: {{ user.prenom }}</div>
-    <div>Nom d'utilisateur: {{ user.identifiant }}</div>
-    <div>société: {{ user.society ?? 'pas de société' }}</div>
+<section class="account-center">
+    <div class="account-card">
+        {% if user.pfp %}
+            <img src="{{ asset('uploads/pfp/' ~ user.pfp) }}" alt="photo de profil" class="account-avatar">
+        {% else %}
+            {% set pfpIndex = random(0, 7) %}
+            <img src="{{ asset('uploads/picturesAccount/' ~ pfpIndex ~ '.png') }}" alt="photo de profil par défaut" class="account-avatar">
+        {% endif %}
+
+        <h1 class="account-title">{{ user.prenom }} {{ user.nom }}</h1>
+
+        <div class="account-details">
+            <div class="account-row">
+                <span class="account-label">Nom</span>
+                <span class="account-value">{{ user.nom }}</span>
+            </div>
+            <div class="account-row">
+                <span class="account-label">Prénom</span>
+                <span class="account-value">{{ user.prenom }}</span>
+            </div>
+            <div class="account-row">
+                <span class="account-label">Nom d'utilisateur</span>
+                <span class="account-value">{{ user.identifiant }}</span>
+            </div>
+            <div class="account-row">
+                <span class="account-label">Société</span>
+                <span class="account-value">{{ user.society ?? 'pas de société' }}</span>
+            </div>
+        </div>
     </div>
-
-
-</div>
+</section>
 {% endblock %}

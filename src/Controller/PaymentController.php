@@ -2,40 +2,52 @@
 
 namespace App\Controller;
 
+use App\Entity\Baie;
 use App\Entity\Offre;
 use App\Entity\Reservation;
-use App\Entity\Unite;
-use App\Entity\Baie;
 use App\Entity\Status;
+use App\Entity\Unite;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PaymentController extends AbstractController
 {
     #[Route('/payer/{id}', name: 'app_payment_checkout')]
-    public function checkout(Offre $offre, Request $request): Response
-    {
-    $period = $request->query->get('period','mensuel');
-    if(!in_array($period, ['mensuel', 'annuel'], true)) {
-        $period = 'mensuel';
+    public function checkout(
+        Offre $offre,
+        Request $request,
+        #[Autowire('%env(STRIPE_SECRET_KEY)%')] string $stripeSecretKey
+    ): Response {
+        $period = $request->query->get('period', 'mensuel');
+        if (!in_array($period, ['mensuel', 'annuel'], true)) {
+            $period = 'mensuel';
+        }
 
-    }
+        $prix = $period === 'annuel' ? $offre->getPrixAnnuel() : $offre->getPrixMensuel();
+        $interval = $period === 'annuel' ? 'year' : 'month';
+        $labelPeriod = $period === 'annuel' ? 'Annuel' : 'Mensuel';
 
-    $prix = $period === 'annuel'? $offre->getPrixAnnuel() : $offre->getPrixMensuel();
-    $interval = $period === 'annuel' ? 'year' : 'month';
-    $labelPeriod = $period === 'annuel' ? 'Annuel':'Mensuel';
-
-        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+        Stripe::setApiKey($stripeSecretKey);
 
         $scheme = $request->headers->get('x-forwarded-proto', $request->getScheme());
         $host = $request->headers->get('x-forwarded-host', $request->getHttpHost());
         $baseUrl = $scheme . '://' . $host;
+
+        $successUrl = str_replace(
+            '%7BCHECKOUT_SESSION_ID%7D',
+            '{CHECKOUT_SESSION_ID}',
+            $baseUrl . $this->generateUrl('payment_success', [
+                'offre_id' => $offre->getId(),
+                'period' => $period,
+                'session_id' => '{CHECKOUT_SESSION_ID}',
+            ])
+        );
 
         $session = Session::create([
             'line_items' => [[
@@ -44,10 +56,10 @@ class PaymentController extends AbstractController
                     'product_data' => [
                         'name' => sprintf('%s (%s)', $offre->getNom(), $labelPeriod),
                     ],
-                    'unit_amount' => (int) round ($prix * 100) ,
+                    'unit_amount' => (int) round($prix * 100),
                     'recurring' => [
                         'interval' => $interval,
-                    ]
+                    ],
                 ],
                 'quantity' => 1,
             ]],
@@ -56,9 +68,7 @@ class PaymentController extends AbstractController
                 'offre_id' => $offre->getId(),
                 'period' => $period,
             ],
-            'success_url' => $baseUrl . $this->generateUrl('payment_success', 
-            ['offre_id' => $offre->getId(),
-            'period' => $period]),
+            'success_url' => $successUrl,
             'cancel_url' => $baseUrl . $this->generateUrl('payment_cancel'),
         ]);
 
@@ -66,14 +76,28 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/payment/success', name: 'payment_success')]
-    public function success(Request $request, EntityManagerInterface $entitymanager): Response
-    {
+    public function success(
+        Request $request,
+        EntityManagerInterface $entitymanager,
+        #[Autowire('%env(STRIPE_SECRET_KEY)%')] string $stripeSecretKey
+    ): Response {
         $offreId = $request->query->get('offre_id');
         $period = $request->query->get('period', 'mensuel');
         if (!in_array($period, ['mensuel', 'annuel'], true)) {
             $period = 'mensuel';
         }
         $user = $this->getUser();
+
+        $sessionId = $request->query->get('session_id');
+        $stripeSubscriptionId = null;
+
+        if ($sessionId && $sessionId !== '{CHECKOUT_SESSION_ID}') {
+            Stripe::setApiKey($stripeSecretKey);
+            $checkoutSession = Session::retrieve($sessionId);
+            $stripeSubscriptionId = is_string($checkoutSession->subscription)
+                ? $checkoutSession->subscription
+                : ($checkoutSession->subscription->id ?? null);
+        }
 
         if ($offreId) {
             $offre = $entitymanager->getRepository(Offre::class)->find($offreId);
@@ -84,6 +108,8 @@ class PaymentController extends AbstractController
                 $reservation->setOffre($offre);
                 $reservation->setPeriod($period);
                 $reservation->setPaidAt(new \DateTimeImmutable());
+                $reservation->setStripeSubscriptionId($stripeSubscriptionId);
+
                 $entitymanager->persist($reservation);
 
                 $nombreTotalUnites = $offre->getNbunit();
@@ -109,7 +135,7 @@ class PaymentController extends AbstractController
                     $unite->setNumeroU(sprintf('U%03d', $numeroUnite));
                     $unite->setReservation($reservation);
                     if ($status) {
-                    $unite->setStatus($status);
+                        $unite->setStatus($status);
                     }
                     $unite->setBaie($baieCourante);
                     $entitymanager->persist($unite);
@@ -118,13 +144,8 @@ class PaymentController extends AbstractController
                 $entitymanager->flush();
             }
         }
-        return $this->render('payment/success.html.twig', ['period' => $period]);
-    }
 
-    #[Route('/payment/cancel', name: 'payment_cancel')]
-    public function cancel(): Response
-    {
-        return $this->render('payment/cancel.html.twig');
+        return $this->render('payment/success.html.twig', ['period' => $period]);
     }
 
     #[Route('/payment/cancel', name: 'payment_cancel')]

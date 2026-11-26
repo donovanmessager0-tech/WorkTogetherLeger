@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class AccountController extends AbstractController
 {
-    #[Route('/account', name: 'app_account_index', methods: ['GET'])]
+    #[Route('/account', name: 'app_account', methods: ['GET'])]
     public function index(): Response
     {
         $user = $this->getUser();

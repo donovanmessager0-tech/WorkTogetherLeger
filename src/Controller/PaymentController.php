@@ -19,11 +19,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class PaymentController extends AbstractController
 {
     #[Route('/payer/{id}', name: 'app_payment_checkout')]
-    public function checkout(
-        Offre $offre,
-        Request $request,
-        #[Autowire('%env(STRIPE_SECRET_KEY)%')] string $stripeSecretKey
-    ): Response {
+    public function checkout(Offre $offre, Request $request): Response
+    {
         $period = $request->query->get('period', 'mensuel');
         if (!in_array($period, ['mensuel', 'annuel'], true)) {
             $period = 'mensuel';
@@ -33,7 +30,7 @@ class PaymentController extends AbstractController
         $interval = $period === 'annuel' ? 'year' : 'month';
         $labelPeriod = $period === 'annuel' ? 'Annuel' : 'Mensuel';
 
-        Stripe::setApiKey($stripeSecretKey);
+        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
 
         $scheme = $request->headers->get('x-forwarded-proto', $request->getScheme());
         $host = $request->headers->get('x-forwarded-host', $request->getHttpHost());
@@ -92,7 +89,7 @@ class PaymentController extends AbstractController
         $stripeSubscriptionId = null;
 
         if ($sessionId && $sessionId !== '{CHECKOUT_SESSION_ID}') {
-            Stripe::setApiKey($stripeSecretKey);
+            Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
             $checkoutSession = Session::retrieve($sessionId);
             $stripeSubscriptionId = is_string($checkoutSession->subscription)
                 ? $checkoutSession->subscription

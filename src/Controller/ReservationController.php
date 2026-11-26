@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Utilisateur;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Stripe\Exception\ApiErrorException;
+use Stripe\StripeClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -74,9 +76,34 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
-    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+    public function delete(
+        Request $request,
+        Reservation $reservation,
+        EntityManagerInterface $entityManager,
+        #[Autowire('%env(STRIPE_SECRET_KEY)%')] string $stripeSecretKey
+    ): Response {
+        if ($this->isCsrfTokenValid('delete' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
+            $subscriptionId = $reservation->getStripeSubscriptionId();
+
+            if ($subscriptionId) {
+                try {
+                    $stripe = new StripeClient($stripeSecretKey);
+                    $stripe->subscriptions->cancel($subscriptionId);
+                } catch (ApiErrorException $e) {
+                    $this->addFlash('danger', 'Erreur Stripe lors de l’annulation : ' . $e->getMessage());
+
+                    return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+                }
+            }
+            foreach ($reservation->getUnites() as $unite) {
+                $entityManager->remove($unite);
+            }
+            foreach ($reservation->getBaie() as $baie) {
+                $entityManager->remove($baie);
+            }
+
+            $entityManager->remove($reservation);
+            $entityManager->flush();
             $entityManager->remove($reservation);
             $entityManager->flush();
         }

@@ -380,3 +380,72 @@ a.btn:hover {
     line-height: 1;
     color: var(--type-color, currentColor);
 }
+
+.account-center {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.account-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.account-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.account-title {
+    margin-bottom: 1.75rem;
+    font-size: 1.75rem;
+}
+
+.account-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    background-color: var(--bg-color);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.account-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.account-value {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1rem;
+    word-break: break-word;
+}

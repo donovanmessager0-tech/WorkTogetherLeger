@@ -40,6 +40,9 @@ class Reservation
     #[ORM\Column(length: 255)]
     private ?string $period = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeSubscriptionId = null;
+
     public function __construct()
     {
         $this->baie = new ArrayCollection();
@@ -155,6 +158,18 @@ class Reservation
     public function setPeriod(string $period): static
     {
         $this->period = $period;
+
+        return $this;
+    }
+
+    public function getStripeSubscriptionId(): ?string
+    {
+        return $this->stripeSubscriptionId;
+    }
+
+    public function setStripeSubscriptionId(?string $stripeSubscriptionId): static
+    {
+        $this->stripeSubscriptionId = $stripeSubscriptionId;
 
         return $this;
     }

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -72,8 +73,11 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/payment/success', name: 'payment_success')]
-    public function success(Request $request, EntityManagerInterface $entitymanager): Response
-    {
+    public function success(
+        Request $request,
+        EntityManagerInterface $entitymanager,
+        #[Autowire('%env(STRIPE_SECRET_KEY)%')] string $stripeSecretKey
+    ): Response {
         $offreId = $request->query->get('offre_id');
         $period = $request->query->get('period', 'mensuel');
         if (!in_array($period, ['mensuel', 'annuel'], true)) {
